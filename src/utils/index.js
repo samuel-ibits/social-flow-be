@@ -17,3 +17,6 @@ function getNextRunAt(currentDate, recurrence) {
   
     return next;
   }
+  
+  module.exports = getNextRunAt;
+  
