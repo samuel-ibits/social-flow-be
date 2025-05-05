@@ -20,19 +20,7 @@ cron.schedule('* * * * *', async () => {
 
     for (const post of posts) {
       try {
-        if (post.prompt && post.aiGenerated) {
-          try {
-            const generated = await generateText(post.prompt, 'openai'); // or 'claude'
-            post.content = generated;
-            console.log(`Generated content for post ${post._id} using AI.`);
-          } catch (aiErr) {
-            post.status = 'failed';
-            post.errorMessage = `AI generation failed: ${aiErr.message}`;
-            await post.save();
-            console.error(`AI generation failed for post ${post._id}:`, aiErr.message);
-            continue; // Skip publishing if content couldn't be generated
-          }
-        }
+     
         const result = await SocialMediaService.publishPost(post);
         const hasSuccess = result.some(r => r.status === 'success');
 
@@ -46,6 +34,19 @@ cron.schedule('* * * * *', async () => {
 
         // Handle recurrence
         if (post.recurrence !== 'none') {
+          if (post.prompt && post.aiGenerated) {
+            try {
+              const generated = await generateText(post.prompt, 'openai'); // or 'claude'
+              post.content = generated;
+              console.log(`Generated content for post ${post._id} using AI.`);
+            } catch (aiErr) {
+              post.status = 'failed';
+              post.errorMessage = `AI generation failed: ${aiErr.message}`;
+              await post.save();
+              console.error(`AI generation failed for post ${post._id}:`, aiErr.message);
+              continue; // Skip publishing if content couldn't be generated
+            }
+          }
           post.nextRunAt = getNextRunAt(post.nextRunAt || post.scheduledAt, post.recurrence);
         } else {
           post.status = 'completed';
