@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 const postSchema = new mongoose.Schema({
   projectId: { type: mongoose.Schema.Types.ObjectId, ref: 'Project' },
   content: String,
+  prompt: String,
+  aiGenerated: { type: Boolean, default: false },
   mediaUrls: [String],
   platforms: [
     { type: String, enum: ['facebook', 'twitter', 'instagram', 'linkedin', 'tiktok', 'youtube'] }

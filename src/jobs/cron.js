@@ -2,6 +2,7 @@ const cron = require('node-cron');
 const Post = require('../models/Post'); 
 const SocialMediaService = require('../services/SocialMediaService');
 const getNextRunAt = require('../utils');
+const { generateText } = require('../services/aiService');
 
 cron.schedule('* * * * *', async () => {
   console.log('Checking for scheduled and recurring posts...');
@@ -19,6 +20,19 @@ cron.schedule('* * * * *', async () => {
 
     for (const post of posts) {
       try {
+        if (post.prompt && post.aiGenerated) {
+          try {
+            const generated = await generateText(post.prompt, 'openai'); // or 'claude'
+            post.content = generated;
+            console.log(`Generated content for post ${post._id} using AI.`);
+          } catch (aiErr) {
+            post.status = 'failed';
+            post.errorMessage = `AI generation failed: ${aiErr.message}`;
+            await post.save();
+            console.error(`AI generation failed for post ${post._id}:`, aiErr.message);
+            continue; // Skip publishing if content couldn't be generated
+          }
+        }
         const result = await SocialMediaService.publishPost(post);
         const hasSuccess = result.some(r => r.status === 'success');
 
