@@ -8,10 +8,11 @@ const client = new TwitterApi({
   // accessToken: process.env.TWITTER_ACCESS_TOKEN,
   // accessSecret: process.env.TWITTER_ACCESS_TOKEN_SECRET,
   
-  appKey: "KX2hMTmjbqBGr8yM2kc3xKlYM",
-  appSecret: "1XXXn10dnArt6L9OX60vKU9tkJuRvFCywSxF4IfSjIxpnIcoZm",
-  accessToken: "1393363644377968640-lXAjQ65DT03oKi10KlD6jCFu5o289u",
-  accessSecret: "ouT8EHWyw7FHh4P4qFfuYpXGym2LT4Cp8WLyCQhM2aSYc",
+  appKey: process.env.TWITTER_APP_KEY,
+  appSecret: process.env.TWITTER_APP_SECRET,
+  accessToken: process.env.TWITTER_ACCESS_TOKEN,
+  accessSecret: process.env.TWITTER_ACCESS_SECRET,
+  
 });
 
 const TwitterService = {

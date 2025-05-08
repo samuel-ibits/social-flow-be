@@ -8,15 +8,30 @@ exports.getPosts = async (req, res) => {
 
 // const postQueue = require('../jobs/postScheduler');
 
+// exports.createPost = async (req, res) => {
+//   const post = await Post.create({ ...req.body, userId: req.user._id });
+//   res.json(post);
+// };
+
 exports.createPost = async (req, res) => {
-  const post = await Post.create({ ...req.body, userId: req.user._id });
+  try {
+    const mediaUrls = [];
 
-  // if (post.scheduledAt) {
-  //   await postQueue.add('publish', { postId: post._id }, {
-  //     delay: new Date(post.scheduledAt) - new Date(),
-  //     jobId: `post-${post._id}`
-  //   });
-  // }
+    if (req.files && req.files.length > 0) {
+      req.files.forEach(file => {
+        mediaUrls.push(`/uploads/${file.filename}`); // or full URL if hosted
+      });
+    }
 
-  res.json(post);
+    const post = await Post.create({
+      ...req.body,
+      userId: req.user._id,
+      mediaUrls
+    });
+
+    res.json(post);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to create post' });
+  }
 };

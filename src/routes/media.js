@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const upload = require('../middlewares/upload');
+const upload = require('../middlewares/uploads');
 const auth = require('../middlewares/auth');
 
 router.post('/upload', auth, upload.single('file'), async (req, res) => {
