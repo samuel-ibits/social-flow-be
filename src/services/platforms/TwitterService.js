@@ -52,7 +52,32 @@ const TwitterService = {
     // };
 
     try {
-      const res = await client.v2.tweet(post.content);
+ // Ensure post.mediaUrls exists and is an array
+  const mediaIds = await Promise.all(
+    post.mediaUrls.map(async (url) => {
+      try {
+        const absolutePath = path.resolve(url); // Use full path if url is relative
+        const mediaData = fs.readFileSync(absolutePath);
+        
+        // You can auto-detect or specify type based on file extension
+        const ext = path.extname(url).substring(1); // e.g., 'jpg'
+        const mediaId = await client.v1.uploadMedia(mediaData, { type: ext });
+        return mediaId;
+      } catch (err) {
+        console.error(`Error uploading media: ${url}`, err.message);
+        return null; // or throw if you want to stop on error
+      }
+    })
+  );
+
+// Filter out failed uploads (nulls)
+const validMediaIds = mediaIds.filter(Boolean);
+
+      const res = await client.v2.tweet(post.content, {
+        media: {
+          media_ids: validMediaIds,
+        },
+      });
 
       // const res = await axios.post('https://api.twitter.com/2/tweets', payload, {
       //   headers: {
