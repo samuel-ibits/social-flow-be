@@ -1,18 +1,36 @@
 const axios = require('axios');
 const { OpenAI } = require('openai');
 
+// Default OpenAI client
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
+  apiKey: process.env.OPENAI_API_KEY,
+  baseURL: "https://api.openai.com/v1", // fallback OpenAI base
+});
+
+// OpenRouter client
+const openrouter = new OpenAI({
+  apiKey: process.env.OPENROUTER_API_KEY,
+  baseURL: "https://openrouter.ai/api/v1",
 });
 
 // TEXT: Generate caption/content
 exports.generateText = async (prompt, provider = 'openai') => {
   if (provider === 'openai') {
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4',
+      model: 'gpt-4.1',
       messages: [{ role: 'user', content: prompt }]
     });
     return completion.choices[0].message.content.trim();
+  }
+
+  if (provider === 'openrouter') {
+    const completion = await openrouter.chat.completions.create({
+      model: 'openai/gpt-4o', 
+      messages: [{ role: 'user', content: 'write a social media post concerning this topic: '+ prompt }],
+      max_tokens: 1000,
+    });
+    console.log(completion);
+    return completion?.choices?.[0]?.message?.content?.trim() ?? completion?.error?.message ?? 'An unknown error occurred';
   }
 
   if (provider === 'claude') {
@@ -37,7 +55,7 @@ exports.generateText = async (prompt, provider = 'openai') => {
   throw new Error('Unsupported provider');
 };
 
-// IMAGE: Generate via DALL·E
+// IMAGE: Generate via DALL·E (OpenAI)
 exports.generateImage = async (prompt) => {
   const response = await openai.images.generate({
     prompt,
