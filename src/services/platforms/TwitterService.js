@@ -1,6 +1,8 @@
 const axios = require('axios');
 require('dotenv').config();
 const { TwitterApi } = require('twitter-api-v2');
+const fs = require('fs');
+const path = require('path');
 
 const client = new TwitterApi({
   // appKey: process.env.TWITTER_API_KEY,
