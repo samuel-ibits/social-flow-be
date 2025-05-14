@@ -15,18 +15,18 @@ exports.getPosts = async (req, res) => {
 
 exports.createPost = async (req, res) => {
   try {
-    const mediaUrls = [];
+    // const mediaUrls = [];
 
-    if (req.files && req.files.length > 0) {
-      req.files.forEach(file => {
-        mediaUrls.push(`/uploads/${file.filename}`); // or full URL if hosted
-      });
-    }
+    // if (req.files && req.files.length > 0) {
+    //   req.files.forEach(file => {
+    //     mediaUrls.push(`/uploads/${file.filename}`); // or full URL if hosted
+    //   });
+    // }
 
     const post = await Post.create({
       ...req.body,
-      userId: req.user._id,
-      mediaUrls
+      // userId: req.user._id,
+      // mediaUrls
     });
 
     res.json(post);
