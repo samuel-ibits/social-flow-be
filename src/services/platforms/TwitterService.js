@@ -59,8 +59,9 @@ const TwitterService = {
     post.mediaUrls.map(async (url) => {
       try {
       //   const absolutePath = path.resolve(url); // Use full path if url is relative
-        const mediaData = fs.readFileSync(url);
-        
+        // const mediaData = fs.readFileSync(url);
+        const response = await axios.get(url, { responseType: 'arraybuffer' });
+        const mediaData = Buffer.from(response.data, 'binary');
         // You can auto-detect or specify type based on file extension
         const ext = path.extname(url).substring(1); // e.g., 'jpg'
         const mediaId = await client.v1.uploadMedia(mediaData, { type: ext });
