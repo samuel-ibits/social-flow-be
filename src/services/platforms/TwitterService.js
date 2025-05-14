@@ -56,8 +56,8 @@ const TwitterService = {
   const mediaIds = await Promise.all(
     post.mediaUrls.map(async (url) => {
       try {
-        const absolutePath = path.resolve(url); // Use full path if url is relative
-        const mediaData = fs.readFileSync(absolutePath);
+      //   const absolutePath = path.resolve(url); // Use full path if url is relative
+        const mediaData = fs.readFileSync(url);
         
         // You can auto-detect or specify type based on file extension
         const ext = path.extname(url).substring(1); // e.g., 'jpg'
