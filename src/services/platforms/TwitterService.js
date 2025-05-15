@@ -73,14 +73,15 @@ const TwitterService = {
     })
   );
 
-// Filter out failed uploads (nulls)
-const validMediaIds = mediaIds.filter(Boolean);
+      // Filter out failed uploads (nulls)
+      const validMediaIds = mediaIds.filter(Boolean);
 
-      const res = await client.v2.tweet(post.content, {
-        media: {
-          media_ids: validMediaIds,
-        },
-      });
+      const options = validMediaIds?.length
+      ? { media: { media_ids: validMediaIds } }
+      : {};
+
+      const res = await client.v2.tweet(post.content, options);
+
 
       // const res = await axios.post('https://api.twitter.com/2/tweets', payload, {
       //   headers: {
